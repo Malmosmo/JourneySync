@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="m-5 p-3 border rounded">
+        <form action="{% url 'home' %}">
+            <div class="mb-3">
+                <label class="form-label" for="code">Enter Code Here</label>
+                <input type="text" name="code" id="code" class="form-control">
+            </div>
+        </form>
+
+        <div class="text-center">
+            -
+            or
+            -
+        </div>
+
+
+        <form id="uploadForm" action="{% url 'room-create' %}" enctype="multipart/form-data" method="post">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Journeymap Folder</label>
+                <input class="form-control" type="file" id="formFile" name="file_field" webkitdirectory mozdirectory>
+                <input type="text" id="directories" name="directories" hidden/>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <script>
+        const form = document.querySelector('form#uploadForm');
+        const input = form.querySelector('input#formFile');
+        const dirs = form.querySelector('input#directories');
+
+        input.addEventListener("change", _ => {
+            const files = input.files;
+            let directories = {};
+
+            for (let idx = 0; idx < files.length; idx++) {
+                directories[idx] = files[idx].webkitRelativePath
+            }
+
+            dirs.value = JSON.stringify(directories)
+
+            // todo: submit on change
+        });
+    </script>
+{% endblock %}
